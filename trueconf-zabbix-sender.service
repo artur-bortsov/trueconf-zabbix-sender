@@ -1,0 +1,35 @@
+[Unit]
+Description=TrueConf Zabbix Sender — persistent chatbot service
+Documentation=file:/opt/trueconf-zabbix-sender/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=zabbix
+Group=zabbix
+
+WorkingDirectory=/opt/trueconf-zabbix-sender
+
+# Run the bot in service mode (persistent WebSocket connection)
+ExecStart=/opt/trueconf-zabbix-sender/venv/bin/python3 \
+          /opt/trueconf-zabbix-sender/trueconf_sender.py --service
+
+# Restart on failure; give it 15 s before the next attempt
+Restart=on-failure
+RestartSec=15
+
+# Write logs to the systemd journal (view with: journalctl -u trueconf-zabbix-sender)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=trueconf-zabbix-sender
+
+# ── Security hardening ──────────────────────────────────────────────────────
+NoNewPrivileges=true
+PrivateTmp=true
+# Allow writes only to the install dir (for future log file support)
+ProtectSystem=strict
+ReadWritePaths=/opt/trueconf-zabbix-sender
+
+[Install]
+WantedBy=multi-user.target

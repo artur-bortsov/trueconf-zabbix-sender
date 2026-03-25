@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────────────────────────
+# TrueConf Zabbix Sender — configuration file
+# ─────────────────────────────────────────────────────────────────
+# After editing, keep this file readable only by the service owner:
+#   chmod 640 config.toml
+#   chown zabbix:zabbix config.toml
+# ─────────────────────────────────────────────────────────────────
+
+[server]
+# TrueConf Server hostname (FQDN or IP)
+host = "tconf.example.com"
+# Verify the server's TLS certificate.
+# Set to false when the server uses a private/corporate CA certificate that is
+# not in the system trust store. On Ubuntu, install the CA cert and set to true:
+#   sudo cp corporate-ca.crt /usr/local/share/ca-certificates/
+#   sudo update-ca-certificates
+verify_ssl = true
+
+[credentials]
+# TrueConf account used by the bot — must exist on the server
+login    = "your_bot_account"
+password = "your_password"
+
+[email_mapping]
+# Zabbix recipient addresses come in as user@example.com,
+# but TrueConf IDs on this server are user@tconf.example.com.
+# The username part (before @) is preserved exactly as-is.
+from_domain = "example.com"
+to_domain   = "tconf.example.com"
+
+[sender]
+# Message text format: "text" | "markdown" | "html"
+parse_mode      = "text"
+# Seconds to wait for the WebSocket connection + authentication
+connect_timeout = 30
+# Number of retry attempts on connection failure (1 = no retries)
+max_retries     = 3
+# Seconds to wait between retry attempts
+retry_delay     = 5
+# Logging level: DEBUG | INFO | WARNING | ERROR
+log_level       = "INFO"
+# Log file path; leave empty to log to stderr (recommended for systemd)
+log_file        = ""
