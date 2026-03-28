@@ -1,6 +1,6 @@
 # TrueConf Zabbix Sender
 
-![TrueConf Zabbix Sender](assets/banner.svg)
+![TrueConf Zabbix Sender](assets/project-thumbnail.svg)
 
 A lightweight script that lets Zabbix send alert notifications as direct
 TrueConf chat messages.
