@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="btitle bdesc">
+  <title id="btitle">TrueConf Zabbix Sender</title>
+  <desc id="bdesc">Python bridge that delivers Zabbix alert notifications as direct TrueConf chat messages with queue-first service mode.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#080f1f"/>
+      <stop offset="100%" stop-color="#114894"/>
+    </linearGradient>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="34"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="500" fill="url(#bg)"/>
+  <ellipse cx="155" cy="100" rx="250" ry="160" fill="#548aff" fill-opacity="0.28" filter="url(#blur)"/>
+  <ellipse cx="980" cy="40"  rx="190" ry="120" fill="#9576ff" fill-opacity="0.18" filter="url(#blur)"/>
+  <ellipse cx="1025" cy="440" rx="260" ry="170" fill="#42d9ff" fill-opacity="0.18" filter="url(#blur)"/>
+  <g opacity="0.12" stroke="#ffffff" stroke-width="1">
+    <line x1="640"  y1="48" x2="534" y2="458"/>
+    <line x1="695"  y1="48" x2="589" y2="458"/>
+    <line x1="750"  y1="48" x2="644" y2="458"/>
+    <line x1="805"  y1="48" x2="699" y2="458"/>
+    <line x1="860"  y1="48" x2="754" y2="458"/>
+    <line x1="915"  y1="48" x2="809" y2="458"/>
+    <line x1="970"  y1="48" x2="864" y2="458"/>
+    <line x1="1025" y1="48" x2="919" y2="458"/>
+    <line x1="1080" y1="48" x2="974" y2="458"/>
+    <line x1="1135" y1="48" x2="1029" y2="458"/>
+  </g>
+  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
+    <line x1="600" y1="90"  x2="1150" y2="90"/>
+    <line x1="600" y1="136" x2="1150" y2="136"/>
+    <line x1="600" y1="182" x2="1150" y2="182"/>
+    <line x1="600" y1="228" x2="1150" y2="228"/>
+    <line x1="600" y1="274" x2="1150" y2="274"/>
+    <line x1="600" y1="320" x2="1150" y2="320"/>
+    <line x1="600" y1="366" x2="1150" y2="366"/>
+    <line x1="600" y1="412" x2="1150" y2="412"/>
+    <line x1="600" y1="458" x2="1150" y2="458"/>
+  </g>
+  <g font-family="Inter, Arial, Helvetica, sans-serif">
+    <rect x="72" y="52" width="248" height="36" rx="18" fill="#091223" fill-opacity="0.55" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="196" y="76" text-anchor="middle" fill="#c4d6ec" font-size="17" font-weight="700">Monitoring → ChatOps</text>
+    <text x="72" y="158" fill="#f5f9ff" font-size="66" font-weight="800">TrueConf</text>
+    <text x="72" y="230" fill="#f5f9ff" font-size="66" font-weight="800">Zabbix</text>
+    <text x="72" y="302" fill="#f5f9ff" font-size="66" font-weight="800">Sender</text>
+    <rect x="72" y="320" width="156" height="7" rx="3" fill="#42d9ff"/>
+    <text x="72" y="364" fill="#f5f9ff" font-size="22" font-weight="600">Deliver Zabbix alerts straight</text>
+    <text x="72" y="390" fill="#f5f9ff" font-size="22" font-weight="600">into TrueConf chats.</text>
+    <text x="72" y="424" fill="#c4d6ec" font-size="15">Python · queue-first delivery · email mapping · service mode</text>
+    <rect x="72"  y="448" width="150" height="34" rx="16" fill="#091223" fill-opacity="0.55" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="147" y="470" text-anchor="middle" fill="#f5f9ff" font-size="14" font-weight="700">Persistent queue</text>
+    <rect x="236" y="448" width="162" height="34" rx="16" fill="#091223" fill-opacity="0.55" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="317" y="470" text-anchor="middle" fill="#f5f9ff" font-size="14" font-weight="700">Email → ID mapping</text>
+    <rect x="412" y="448" width="118" height="34" rx="16" fill="#091223" fill-opacity="0.55" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="471" y="470" text-anchor="middle" fill="#f5f9ff" font-size="14" font-weight="700">Burst-ready</text>
+    <!-- Right panel -->
+    <rect x="610" y="72" width="540" height="392" rx="28" fill="#081224" fill-opacity="0.84" stroke="#6991cd" stroke-opacity="0.36"/>
+    <text x="646" y="118" fill="#f5f9ff" font-size="24" font-weight="700">How it works</text>
+    <text x="646" y="145" fill="#c4d6ec" font-size="15">One sender keeps monitoring notifications fast,</text>
+    <text x="646" y="163" fill="#c4d6ec" font-size="15">direct, and resilient.</text>
+    <!-- Card 1: Zabbix -->
+    <g>
+      <rect x="646" y="186" width="132" height="128" rx="20" fill="#0c182d" fill-opacity="0.92" stroke="#ffaa54" stroke-opacity="0.74" stroke-width="2"/>
+      <rect x="662" y="200" width="100" height="7" rx="3" fill="#ffaa54"/>
+      <circle cx="682" cy="217" r="9" fill="#ffaa54" fill-opacity="0.18" stroke="#ffaa54"/>
+      <text x="712" y="252" text-anchor="middle" fill="#f5f9ff" font-size="22" font-weight="700">Zabbix</text>
+      <text x="712" y="281" text-anchor="middle" fill="#c4d6ec" font-size="14">Detects</text>
+      <text x="712" y="299" text-anchor="middle" fill="#c4d6ec" font-size="14">problems</text>
+    </g>
+    <!-- Card 2: Queue -->
+    <g>
+      <rect x="814" y="186" width="132" height="128" rx="20" fill="#0c182d" fill-opacity="0.92" stroke="#42d9ff" stroke-opacity="0.74" stroke-width="2"/>
+      <rect x="830" y="200" width="100" height="7" rx="3" fill="#42d9ff"/>
+      <circle cx="850" cy="217" r="9" fill="#42d9ff" fill-opacity="0.18" stroke="#42d9ff"/>
+      <text x="880" y="252" text-anchor="middle" fill="#f5f9ff" font-size="22" font-weight="700">Queue</text>
+      <text x="880" y="281" text-anchor="middle" fill="#c4d6ec" font-size="14">Maps emails</text>
+      <text x="880" y="299" text-anchor="middle" fill="#c4d6ec" font-size="14">&amp; buffers bursts</text>
+    </g>
+    <!-- Card 3: TrueConf -->
+    <g>
+      <rect x="982" y="186" width="132" height="128" rx="20" fill="#0c182d" fill-opacity="0.92" stroke="#67a3ff" stroke-opacity="0.74" stroke-width="2"/>
+      <rect x="998" y="200" width="100" height="7" rx="3" fill="#67a3ff"/>
+      <circle cx="1018" cy="217" r="9" fill="#67a3ff" fill-opacity="0.18" stroke="#67a3ff"/>
+      <text x="1048" y="252" text-anchor="middle" fill="#f5f9ff" font-size="22" font-weight="700">TrueConf</text>
+      <text x="1048" y="281" text-anchor="middle" fill="#c4d6ec" font-size="14">Sends direct</text>
+      <text x="1048" y="299" text-anchor="middle" fill="#c4d6ec" font-size="14">chat alerts</text>
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-width="5">
+      <line x1="778" y1="250" x2="804" y2="250" stroke="#ffaa54"/>
+      <polygon points="804,250 791,242 791,258" fill="#ffaa54" stroke="none"/>
+      <line x1="946" y1="250" x2="972" y2="250" stroke="#42d9ff"/>
+      <polygon points="972,250 959,242 959,258" fill="#42d9ff" stroke="none"/>
+    </g>
+    <text x="646" y="354" fill="#c4d6ec" font-size="15">Persistent service keeps one connection open</text>
+    <text x="646" y="372" fill="#c4d6ec" font-size="15">while queued alerts are delivered in order.</text>
+    <text x="646" y="444" fill="#c4d6ec" font-size="13" fill-opacity="0.7">Python  ·  systemd service  ·  Ubuntu 24.04  ·  GPL-3.0</text>
+  </g>
+</svg>
