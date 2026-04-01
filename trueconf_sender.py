@@ -53,6 +53,7 @@ from trueconf import Bot, Dispatcher, Router, Message
 from trueconf.methods.create_p2p_chat import CreateP2PChat
 from trueconf.methods.send_message import SendMessage
 from trueconf.exceptions import ApiErrorException
+from trueconf.utils import get_auth_token
 
 
 # ─── Constants ────────────────────────────────────────────────────────────────
@@ -231,12 +232,46 @@ async def _watch_and_send(bot: Bot, parse_mode: str) -> None:
         await asyncio.sleep(1.0)  # 1-second poll interval
 
 
+# ─── Bot factory ──────────────────────────────────────────────────────────────
+
+def _make_bot(
+    server:     str,
+    username:   str,
+    password:   str,
+    port:       int,
+    verify_ssl: bool,
+    dispatcher: Dispatcher | None = None,
+) -> Bot:
+    """
+    Obtain an OAuth token from the TrueConf Server and return a Bot instance.
+
+    Using get_auth_token directly (instead of Bot.from_credentials) lets us
+    pass a non-standard HTTPS port for both the token request and the
+    subsequent WebSocket connection.  Bot.from_credentials always uses port 443.
+
+    Note: the library's Bot.__init__ still hard-codes self.port = 443 when
+    https=True, which affects file-upload and domain-name REST calls.  Those
+    code paths are not used by this sender, so web_port alone is sufficient.
+    """
+    token = get_auth_token(server, username, password, verify=verify_ssl, port=port)
+    if not token:
+        raise RuntimeError("Failed to obtain authentication token")
+    return Bot(
+        server,
+        token,
+        web_port=port,
+        verify_ssl=verify_ssl,
+        dispatcher=dispatcher,
+    )
+
+
 # ─── Direct send: single attempt ──────────────────────────────────────────────
 
 async def _try_send_once(
     server:          str,
     username:        str,
     password:        str,
+    port:            int,
     verify_ssl:      bool,
     trueconf_ids:    list[str],
     message:         str,
@@ -253,10 +288,11 @@ async def _try_send_once(
     """
     # Obtain a JWT token and create the bot instance (synchronous HTTP call)
     try:
-        bot = Bot.from_credentials(
+        bot = _make_bot(
             server=server,
             username=username,
             password=password,
+            port=port,
             verify_ssl=verify_ssl,
         )
     except Exception as exc:
@@ -328,6 +364,7 @@ async def direct_send(
     server:          str,
     username:        str,
     password:        str,
+    port:            int,
     verify_ssl:      bool,
     trueconf_ids:    list[str],
     message:         str,
@@ -352,6 +389,7 @@ async def direct_send(
             server=server,
             username=username,
             password=password,
+            port=port,
             verify_ssl=verify_ssl,
             trueconf_ids=trueconf_ids,
             message=message,
@@ -394,6 +432,7 @@ async def service_mode(config: dict) -> None:
     parse_mode      = sender_cfg.get("parse_mode", "text")
     retry_delay     = float(sender_cfg.get("retry_delay", 15.0))
     connect_timeout = float(sender_cfg.get("connect_timeout", 30.0))
+    port            = int(server_cfg.get("port", 443))
 
     # Ensure the queue directory exists (install.sh creates it, but be safe)
     _QUEUE_DIR.mkdir(exist_ok=True)
@@ -412,8 +451,8 @@ async def service_mode(config: dict) -> None:
         )
 
     logging.info(
-        "TrueConf bot service starting on %s (queue: %s)",
-        server_cfg["host"], _QUEUE_DIR,
+        "TrueConf bot service starting on %s:%d (queue: %s)",
+        server_cfg["host"], port, _QUEUE_DIR,
     )
 
     # Reconnect loop — runs until a clean shutdown (SIGTERM / KeyboardInterrupt)
@@ -424,10 +463,11 @@ async def service_mode(config: dict) -> None:
         queue_task = None
 
         try:
-            bot = Bot.from_credentials(
+            bot = _make_bot(
                 server=server_cfg["host"],
                 username=creds["login"],
                 password=creds["password"],
+                port=port,
                 verify_ssl=server_cfg.get("verify_ssl", True),
                 dispatcher=dp,
             )
@@ -575,6 +615,7 @@ def main() -> int:
         server          = server_cfg["host"],
         username        = creds["login"],
         password        = creds["password"],
+        port            = int(server_cfg.get("port", 443)),
         verify_ssl      = server_cfg.get("verify_ssl", True),
         trueconf_ids    = trueconf_ids,
         message         = message_arg,

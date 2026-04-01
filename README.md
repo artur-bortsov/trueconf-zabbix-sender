@@ -74,6 +74,7 @@ Edit `/opt/trueconf-zabbix-sender/config.toml`:
 ```toml
 [server]
 host       = "tconf.example.com"
+port       = 443    # change if your server uses a non-standard HTTPS port
 verify_ssl = true   # set false if the server uses a private/corporate CA cert
 
 [credentials]
@@ -173,7 +174,7 @@ the script prints a warning before removing them.
 ## Requirements
 
 - Python 3.10 or higher (Ubuntu 24.04 ships with Python 3.12)
-- Network access from the Zabbix server to the TrueConf Server on port 443
+- Network access from the Zabbix server to the TrueConf Server on the configured HTTPS port (default: 443)
 - A valid TrueConf Server account for the bot (the account must already exist)
 - TrueConf Server 5.5 or above (Chatbot API support)
 

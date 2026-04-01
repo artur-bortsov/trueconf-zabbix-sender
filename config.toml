@@ -9,6 +9,9 @@
 [server]
 # TrueConf Server hostname (FQDN or IP)
 host = "tconf.example.com"
+# HTTPS port of the TrueConf Server web interface (default: 443).
+# Change this if your server is configured to use a non-standard port.
+port = 443
 # Verify the server's TLS certificate.
 # Set to false when the server uses a private/corporate CA certificate that is
 # not in the system trust store. On Ubuntu, install the CA cert and set to true:
