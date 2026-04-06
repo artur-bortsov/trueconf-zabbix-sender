@@ -348,7 +348,12 @@ async def _try_send_once(
         with contextlib.suppress(Exception):
             await bot.shutdown()
 
-        # Wait for run_task to finish; force-cancel after 3 s if it lingers
+        # Wait for run_task to finish; force-cancel after 3 s if it lingers.
+        # Always retrieve the task result/exception afterwards to prevent
+        # asyncio's "Task exception was never retrieved" warning: this warning
+        # fires when bot.run() raises internally (e.g. websockets open_timeout)
+        # before our own connect_timeout expires, leaving run_task done-but-
+        # unread while we continue waiting for authorized_event.
         if not run_task.done():
             try:
                 await asyncio.wait_for(run_task, timeout=3.0)
@@ -356,6 +361,9 @@ async def _try_send_once(
                 # wait_for already cancelled run_task on TimeoutError;
                 # other exceptions are acceptable here (e.g. connection reset)
                 pass
+        # Retrieve stored exception (if any) so asyncio does not log a warning
+        with contextlib.suppress(Exception):
+            run_task.result()
 
 
 # ─── Direct send: with retry ──────────────────────────────────────────────────
