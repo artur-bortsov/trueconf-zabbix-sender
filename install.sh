@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# TrueConf Zabbix Sender — installer for Ubuntu 24.04
+# TrueConf Zabbix Sender — installer for Ubuntu 22.04 / 24.04
 #
 # Usage:
 #   sudo ./install.sh [--install-service]
@@ -10,6 +10,7 @@
 #   2. Installs system packages (python3-venv, python3-pip)
 #   3. Copies files to /opt/trueconf-zabbix-sender
 #   4. Creates a Python virtual environment and installs python-trueconf-bot
+#      (also installs the 'tomli' backport automatically on Python 3.10)
 #   5. Creates a symlink in the Zabbix alertscripts directory
 #   6. Sets secure file permissions (owner: zabbix)
 #

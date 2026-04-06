@@ -41,7 +41,7 @@ to TrueConf IDs (`user@tconf.example.com`) using the domain mapping in
 | `trueconf_sender.py` | Main Python script (direct + service modes) |
 | `config.toml` | Configuration — server, credentials, domain mapping |
 | `send-trueconf-message.sh` | Shell wrapper called by Zabbix |
-| `install.sh` | Automated installer for Ubuntu 24.04 |
+| `install.sh` | Automated installer for Ubuntu 22.04 / 24.04 |
 | `uninstall.sh` | Removes all installed files, symlinks, and the service |
 | `trueconf-zabbix-sender.service` | Optional systemd unit for service mode |
 
@@ -63,7 +63,8 @@ The installer:
 1. Checks Python ≥ 3.10
 2. Installs `python3-venv` and `python3-pip`
 3. Copies files to `/opt/trueconf-zabbix-sender/`
-4. Creates a Python virtual environment and installs `python-trueconf-bot`
+4. Creates a Python virtual environment and installs `python-trueconf-bot`;
+   also installs the `tomli` backport automatically when Python 3.10 is detected
 5. Creates a symlink in `/usr/lib/zabbix/alertscripts/`
 6. Sets ownership to `zabbix:zabbix` with secure permissions
 
