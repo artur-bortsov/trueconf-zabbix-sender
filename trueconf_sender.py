@@ -378,8 +378,8 @@ async def direct_send(
     message:         str,
     parse_mode:      str   = "text",
     connect_timeout: float = 30.0,
-    max_retries:     int   = 3,
-    retry_delay:     float = 5.0,
+    max_retries:     int   = 5,
+    retry_delay:     float = 15.0,
 ) -> bool:
     """
     Connect to TrueConf, deliver the message to all recipients, and disconnect.
@@ -629,8 +629,8 @@ def main() -> int:
         message         = message_arg,
         parse_mode      = sender_cfg.get("parse_mode", "text"),
         connect_timeout = float(sender_cfg.get("connect_timeout", 30)),
-        max_retries     = sender_cfg.get("max_retries", 3),
-        retry_delay     = float(sender_cfg.get("retry_delay", 5)),
+        max_retries     = sender_cfg.get("max_retries", 5),
+        retry_delay     = float(sender_cfg.get("retry_delay", 15)),
     ))
 
     if success:

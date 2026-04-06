@@ -37,9 +37,9 @@ parse_mode      = "text"
 # Seconds to wait for the WebSocket connection + authentication
 connect_timeout = 30
 # Number of retry attempts on connection failure (1 = no retries)
-max_retries     = 3
+max_retries     = 5
 # Seconds to wait between retry attempts
-retry_delay     = 5
+retry_delay     = 15
 # Logging level: DEBUG | INFO | WARNING | ERROR
 log_level       = "INFO"
 # Log file path; leave empty to log to stderr (recommended for systemd)
