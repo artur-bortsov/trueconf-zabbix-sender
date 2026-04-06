@@ -45,7 +45,7 @@ to TrueConf IDs (`user@tconf.example.com`) using the domain mapping in
 | `uninstall.sh` | Removes all installed files, symlinks, and the service |
 | `trueconf-zabbix-sender.service` | Optional systemd unit for service mode |
 
-## Installation on Ubuntu 24.04 (Zabbix server)
+## Installation on Ubuntu 22.04 / 24.04 (Zabbix server)
 
 Copy the entire project directory to the server and run:
 
@@ -66,6 +66,11 @@ The installer:
 4. Creates a Python virtual environment and installs `python-trueconf-bot`
 5. Creates a symlink in `/usr/lib/zabbix/alertscripts/`
 6. Sets ownership to `zabbix:zabbix` with secure permissions
+
+> **Ubuntu 22.04:** ships with Python 3.10 — no extra steps needed.
+> **Ubuntu 24.04:** ships with Python 3.12 — no extra steps needed.
+> **Other systems:** if Python 3.10+ is not the default `python3`, install it first
+> (e.g. `sudo add-apt-repository ppa:deadsnakes/ppa && sudo apt install python3.10-venv`).
 
 ## Configuration
 
@@ -88,13 +93,70 @@ to_domain   = "tconf.example.com"
 
 ### SSL certificate
 
-If the TrueConf server uses a corporate CA certificate, install it on Ubuntu
-and then set `verify_ssl = true`:
+#### Corporate / private CA
+
+If the TrueConf server uses a self-signed or corporate CA certificate, install
+the CA on Ubuntu and keep `verify_ssl = true`:
 
 ```bash
 sudo cp corporate-ca.crt /usr/local/share/ca-certificates/
 sudo update-ca-certificates
 ```
+
+Then add the same cert to the Python bundle used by the sender:
+
+```bash
+cat corporate-ca.crt \
+  >> /opt/trueconf-zabbix-sender/venv/lib/python3.*/site-packages/certifi/cacert.pem
+```
+
+> **Why both?** The system `update-ca-certificates` updates `/etc/ssl/certs/`,
+> but the Python venv uses its own `certifi` CA bundle that is independent of
+> the system store. Both must be updated.
+
+#### Missing intermediate certificate (SSL verification failure on a public cert)
+
+If authentication fails with
+`certificate verify failed: unable to get local issuer certificate`
+even though the TrueConf server has a certificate from a well-known CA
+(e.g. GlobalSign), the server is likely **not sending the full certificate
+chain** — only the leaf certificate, without its intermediate CA.
+
+This is a misconfiguration on the TrueConf server side. The correct fix is to
+configure the TrueConf server to include the full chain. Until that is done,
+you can work around it on the Zabbix server by fetching the missing
+intermediate and adding it to both trust stores.
+
+First, find the intermediate cert URL from the leaf certificate's AIA field:
+
+```bash
+echo | timeout 10 openssl s_client -connect tconf.example.com:443 2>/dev/null \
+  | openssl x509 -noout -text \
+  | grep 'CA Issuers'
+# Example output:
+#   CA Issuers - URI:http://secure.globalsign.com/cacert/gsgccr6alphasslca2025.crt
+```
+
+Then download, convert, and install it:
+
+```bash
+# Download the intermediate (DER format) and convert to PEM
+curl -sf http://secure.globalsign.com/cacert/gsgccr6alphasslca2025.crt \
+  -o /tmp/intermediate.crt
+openssl x509 -inform DER -in /tmp/intermediate.crt \
+  -out /usr/local/share/ca-certificates/tconf-intermediate.crt
+
+# Add to the system trust store
+sudo update-ca-certificates
+
+# Add to the Python venv's certifi bundle
+cat /usr/local/share/ca-certificates/tconf-intermediate.crt \
+  >> /opt/trueconf-zabbix-sender/venv/lib/python3.*/site-packages/certifi/cacert.pem
+```
+
+> **Note:** `pip install --upgrade certifi` will reset the certifi bundle and
+> remove any manually appended certificates. Re-run the last `cat` command
+> whenever the venv is recreated or certifi is upgraded.
 
 ## Manual testing
 
@@ -173,7 +235,8 @@ the script prints a warning before removing them.
 
 ## Requirements
 
-- Python 3.10 or higher (Ubuntu 24.04 ships with Python 3.12)
+- Python 3.10 or higher (Ubuntu 22.04 ships with Python 3.10, Ubuntu 24.04 ships with Python 3.12)
+  - Python 3.10 additionally requires the `tomli` package — `install.sh` handles this automatically
 - Network access from the Zabbix server to the TrueConf Server on the configured HTTPS port (default: 443)
 - A valid TrueConf Server account for the bot (the account must already exist)
 - TrueConf Server 5.5 or above (Chatbot API support)

@@ -106,6 +106,15 @@ python3 -m venv "${VENV_DIR}"
 echo "Installing python-trueconf-bot..."
 "${VENV_DIR}/bin/pip" install --upgrade pip --quiet
 "${VENV_DIR}/bin/pip" install python-trueconf-bot --quiet
+
+# Python 3.10 does not ship tomllib in the standard library (added in 3.11).
+# Install the 'tomli' backport so config.toml parsing works on Python 3.10.
+if [[ "${PYTHON_MINOR}" -lt 11 ]]; then
+    echo "Installing tomli backport for Python ${PYTHON_VERSION}..."
+    "${VENV_DIR}/bin/pip" install tomli --quiet
+    echo "[OK] tomli installed"
+fi
+
 echo "[OK] Python dependencies installed"
 
 # ── Zabbix alertscript symlink ──────────────────────────────────────────────────────
