@@ -30,6 +30,8 @@ The configuration file path defaults to config.toml in the same directory as
 this script and can be overridden via the TRUECONF_CONFIG environment variable.
 """
 
+__version__ = "1.0.0"
+
 import asyncio
 import contextlib
 import json
