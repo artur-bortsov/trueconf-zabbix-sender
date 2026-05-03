@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.0.1] – 2026-05-03
+
+### Fixed
+- Avoid importing `get_auth_token` from `trueconf.utils`, because newer
+  `python-trueconf-bot` releases no longer export this internal helper from
+  that module.  The sender now performs the OAuth token request locally using
+  `httpx`, while still using `python-trueconf-bot` for WebSocket messaging.
+- Install `httpx` explicitly in `install.sh` because the sender now imports it
+  directly.
+
+---
+
 ## [1.0.0] – 2026-04-12
 
 Initial public release.

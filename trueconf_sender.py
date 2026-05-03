@@ -30,7 +30,7 @@ The configuration file path defaults to config.toml in the same directory as
 this script and can be overridden via the TRUECONF_CONFIG environment variable.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import asyncio
 import contextlib
@@ -50,12 +50,12 @@ except ImportError:
         import tomli as tomllib          # type: ignore[no-redef]
     except ImportError:
         sys.exit("Error: install 'tomli' for Python 3.10 support:  pip install tomli")
+import httpx
 
 from trueconf import Bot, Dispatcher, Router, Message
 from trueconf.methods.create_p2p_chat import CreateP2PChat
 from trueconf.methods.send_message import SendMessage
 from trueconf.exceptions import ApiErrorException
-from trueconf.utils import get_auth_token
 
 
 # ─── Constants ────────────────────────────────────────────────────────────────
@@ -236,6 +236,51 @@ async def _watch_and_send(bot: Bot, parse_mode: str) -> None:
 
 # ─── Bot factory ──────────────────────────────────────────────────────────────
 
+def _get_auth_token(
+    server:     str,
+    username:   str,
+    password:   str,
+    port:       int,
+    verify_ssl: bool,
+    timeout:    float = 15.0,
+) -> str:
+    """
+    Request a TrueConf chatbot OAuth token.
+
+    This intentionally lives in the project instead of importing
+    trueconf.utils.get_auth_token: that helper is an internal implementation
+    detail of python-trueconf-bot and is not exported consistently across
+    package versions. Keeping the token request here makes installation
+    predictable for users while still passing the custom HTTPS port correctly.
+
+    httpx is already installed as a public dependency of python-trueconf-bot,
+    and it matches the HTTP stack the library itself uses for token requests.
+    """
+    url = f"https://{server}:{port}/bridge/api/client/v1/oauth/token"
+    payload = {
+        "client_id":  "chat_bot",
+        "grant_type": "password",
+        "username":   str(username),
+        "password":   str(password),
+    }
+
+    try:
+        with httpx.Client(timeout=timeout, verify=verify_ssl) as client:
+            response = client.post(url, json=payload)
+            response.raise_for_status()
+            data = response.json()
+    except httpx.HTTPStatusError as exc:
+        raise RuntimeError(
+            f"Token request failed: HTTP {exc.response.status_code}: {exc.response.text}"
+        ) from exc
+    except httpx.RequestError as exc:
+        raise RuntimeError(f"Token request failed: {exc}") from exc
+
+    token = data.get("access_token")
+    if not token:
+        raise RuntimeError("Token response did not contain access_token")
+    return token
+
 def _make_bot(
     server:     str,
     username:   str,
@@ -247,17 +292,21 @@ def _make_bot(
     """
     Obtain an OAuth token from the TrueConf Server and return a Bot instance.
 
-    Using get_auth_token directly (instead of Bot.from_credentials) lets us
-    pass a non-standard HTTPS port for both the token request and the
-    subsequent WebSocket connection.  Bot.from_credentials always uses port 443.
+    Using a local token request (instead of Bot.from_credentials) lets us pass
+    a non-standard HTTPS port for both the token request and the subsequent
+    WebSocket connection.  Bot.from_credentials always uses port 443.
 
     Note: the library's Bot.__init__ still hard-codes self.port = 443 when
     https=True, which affects file-upload and domain-name REST calls.  Those
     code paths are not used by this sender, so web_port alone is sufficient.
     """
-    token = get_auth_token(server, username, password, verify=verify_ssl, port=port)
-    if not token:
-        raise RuntimeError("Failed to obtain authentication token")
+    token = _get_auth_token(
+        server=server,
+        username=username,
+        password=password,
+        port=port,
+        verify_ssl=verify_ssl,
+    )
     return Bot(
         server,
         token,

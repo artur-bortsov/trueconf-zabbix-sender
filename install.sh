@@ -9,7 +9,7 @@
 #   1. Verifies Python 3.10+ is available
 #   2. Installs system packages (python3-venv, python3-pip)
 #   3. Copies files to /opt/trueconf-zabbix-sender
-#   4. Creates a Python virtual environment and installs python-trueconf-bot
+#   4. Creates a Python virtual environment and installs python-trueconf-bot + httpx
 #      (also installs the 'tomli' backport automatically on Python 3.10)
 #   5. Creates a symlink in the Zabbix alertscripts directory
 #   6. Sets secure file permissions (owner: zabbix)
@@ -104,9 +104,9 @@ fi
 echo "Creating Python virtual environment in ${VENV_DIR}..."
 python3 -m venv "${VENV_DIR}"
 
-echo "Installing python-trueconf-bot..."
+echo "Installing Python dependencies..."
 "${VENV_DIR}/bin/pip" install --upgrade pip --quiet
-"${VENV_DIR}/bin/pip" install python-trueconf-bot --quiet
+"${VENV_DIR}/bin/pip" install python-trueconf-bot httpx --quiet
 
 # Python 3.10 does not ship tomllib in the standard library (added in 3.11).
 # Install the 'tomli' backport so config.toml parsing works on Python 3.10.

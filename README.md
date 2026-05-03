@@ -63,7 +63,7 @@ The installer:
 1. Checks Python ≥ 3.10
 2. Installs `python3-venv` and `python3-pip`
 3. Copies files to `/opt/trueconf-zabbix-sender/`
-4. Creates a Python virtual environment and installs `python-trueconf-bot`;
+4. Creates a Python virtual environment and installs `python-trueconf-bot` and `httpx`;
    also installs the `tomli` backport automatically when Python 3.10 is detected
 5. Creates a symlink in `/usr/lib/zabbix/alertscripts/`
 6. Sets ownership to `zabbix:zabbix` with secure permissions
